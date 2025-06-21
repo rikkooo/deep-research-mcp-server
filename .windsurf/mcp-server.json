@@ -1,0 +1,26 @@
+{
+  "name": "deep-research",
+  "version": "1.0.0",
+  "description": "Deep Research MCP Server - Provides AI-powered research capabilities using OpenRouter API",
+  "command": "python",
+  "args": ["-m", "app"],
+  "env": {
+    "PORT": "5000"
+  },
+  "tools": [
+    {
+      "name": "deep_research",
+      "description": "Performs deep research using OpenRouter API",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The research query to process"
+          }
+        },
+        "required": ["query"]
+      }
+    }
+  ]
+}
