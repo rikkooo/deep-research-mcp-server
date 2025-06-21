@@ -101,11 +101,48 @@ class WorkflowManager:
         """Manages Git repository initialization, commit, and push."""
         git_dir = self.project_root / ".git"
         is_git_repo = git_dir.is_dir()
+        repo_url = "https://github.com/rikkooo/deep-research-mcp-server.git"
 
         if not is_git_repo:
             print("[GIT] This is not a Git repository. Initializing...")
             if not self._run_command(["git", "init"]): return
-            # NOTE: We don't create the remote here. That's a future enhancement.
+
+        # Ensure branch is 'main' to match GitHub's default
+        print("[GIT] Ensuring local branch is 'main'...")
+        if not self._run_command(["git", "branch", "-M", "main"]): return
+
+        # Ensure remote is configured correctly
+        remotes_result = subprocess.run(["git", "remote", "-v"], cwd=self.project_root, capture_output=True, text=True)
+        if "origin" not in remotes_result.stdout:
+            print(f"[GIT] Adding remote 'origin' with URL: {repo_url}")
+            if not self._run_command(["git", "remote", "add", "origin", repo_url]): return
+        elif repo_url not in remotes_result.stdout:
+            print(f"[GIT] Remote 'origin' has incorrect URL. Updating it...")
+            if not self._run_command(["git", "remote", "set-url", "origin", repo_url]): return
+        
+        # Add a .gitignore and remove vendor directories if needed.
+        # This is a one-time operation that creates a cleanup commit.
+        gitignore_path = self.project_root / ".gitignore"
+        if not gitignore_path.exists():
+            print("[GIT] Creating .gitignore and cleaning vendor directories from index...")
+            gitignore_content = (
+                "# Python\n"
+                "venv/\n"
+                "__pycache__/\n"
+                "*.pyc\n\n"
+                "# Node\n"
+                "node_modules/\n"
+                "npm-debug.log\n"
+                "package-lock.json\n"
+            )
+            gitignore_path.write_text(gitignore_content)
+            self._run_command(["git", "add", ".gitignore"])
+            self._run_command(["git", "rm", "-r", "--cached", "node_modules", "--ignore-unmatch"])
+            self._run_command(["git", "rm", "-r", "--cached", "venv", "--ignore-unmatch"])
+            # Check if there's anything to commit for the cleanup
+            status_result = subprocess.run(["git", "status", "--porcelain"], cwd=self.project_root, capture_output=True, text=True)
+            if status_result.stdout:
+                self._run_command(["git", "commit", "-m", "chore: Add .gitignore and remove vendor dirs"])
 
         print("[GIT] Committing changes for completed requirement...")
         req_id = self.state.get("RequirementPointer")
@@ -114,26 +151,22 @@ class WorkflowManager:
             req_title = f"Completed work for requirement {req_id}"
 
         commit_message = f"feat(req-{req_id}): {req_title}"
-        if not is_git_repo:
-            commit_message = f"Initial commit: {commit_message}"
-
+        
         if not self._run_command(["git", "add", "."]): return
 
-        # Check if there are changes to commit
         status_result = subprocess.run(["git", "status", "--porcelain"], cwd=self.project_root, capture_output=True, text=True)
         if not status_result.stdout:
-            print("[GIT] No changes to commit.")
+            print("[GIT] No new application changes to commit.")
+            print("[GIT] Attempting to push existing commits...")
+            if not self._run_command(["git", "push", "origin", "main"]):
+                 print("[GIT] Push failed.", file=sys.stderr)
             return
 
         if not self._run_command(["git", "commit", "-m", commit_message]): return
 
-        # Only try to push if it's not the first commit
-        if is_git_repo:
-            print("[GIT] Pushing changes...")
-            if not self._run_command(["git", "push"]):
-                print("[GIT] Push failed. Please ensure your remote is configured correctly.", file=sys.stderr)
-        else:
-            print("[GIT] Initial commit created. Please add a remote and push.")
+        print("[GIT] Pushing changes to remote repository...")
+        if not self._run_command(["git", "push", "-u", "origin", "main"]):
+            print("[GIT] Push failed.", file=sys.stderr)
 
     def _log_approval(self):
         """Logs the approval of a requirement in the approval file."""
