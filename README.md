@@ -35,6 +35,28 @@ cURL -X POST -H "Content-Type: application/json" -d '{"query": "What are the lat
 
 The server will then contact the OpenRouter API and stream back the response from the Perplexity model.
 
+## How to Integrate with a Code App (WindSurf, RooCode, etc.)
+
+To integrate the Deep Research MCP Server with your code application, you can use the provided `npx` command. This allows you to easily call the server from your terminal or from within your application's scripts.
+
+### Installation
+
+First, install the client package globally using `npm`:
+
+```bash
+npm install -g .
+```
+
+### Usage
+
+Once the package is installed, you can use the `deep-research` command followed by your query:
+
+```bash
+deep-research "What are the latest advancements in AI?"
+```
+
+This will send the query to the running MCP server and print the response to the console.
+
 ## How to Run Locally (for testing)
 
 1.  **Create and activate a virtual environment:**

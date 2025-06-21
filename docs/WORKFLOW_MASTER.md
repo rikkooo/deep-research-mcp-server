@@ -5,7 +5,7 @@
 
 ## State
 CurrentStage: Validator
-RequirementPointer: 1 #Current active requirement ID (integer). This points to the Nth requirement in PROJECT_REQUIREMENTS.md or a specific req-ID.
+RequirementPointer: 2 #Current active requirement ID (integer). This points to the Nth requirement in PROJECT_REQUIREMENTS.md or a specific req-ID.
 
 StageStatus (checklist):
 - [x] Engineer
