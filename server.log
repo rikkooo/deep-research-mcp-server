@@ -1,0 +1,20 @@
+nohup: ignoring input
+ * Serving Flask app 'app'
+ * Debug mode: off
+2025-06-21 20:52:44,332 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.20.10.4:5000
+2025-06-21 20:52:44,332 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-21 20:53:00,113 - INFO - 127.0.0.1 - - [21/Jun/2025 20:53:00] "GET /health HTTP/1.1" 200 -
+2025-06-21 20:53:06,609 - INFO - 127.0.0.1 - - [21/Jun/2025 20:53:06] "GET /capabilities HTTP/1.1" 200 -
+2025-06-21 20:53:53,090 - INFO - Received request for /deep_research
+2025-06-21 20:53:53,104 - INFO - Received query: What are the key features of the Model Context Protocol?
+2025-06-21 20:53:53,127 - INFO - Sending streaming request to OpenRouter with payload: {"model": "perplexity/llama-3.1-sonar-large-128k-online", "messages": [{"role": "user", "content": "What are the key features of the Model Context Protocol?"}], "stream": true}
+2025-06-21 20:53:56,260 - INFO - Received response from OpenRouter. Status code: 200
+2025-06-21 20:53:56,263 - INFO - 127.0.0.1 - - [21/Jun/2025 20:53:56] "POST /deep_research HTTP/1.1" 200 -
+2025-06-21 20:54:17,983 - INFO - Received request for /deep_research
+2025-06-21 20:54:17,983 - INFO - Received query: What is the purpose of MCP servers?
+2025-06-21 20:54:17,983 - INFO - Sending streaming request to OpenRouter with payload: {"model": "perplexity/llama-3.1-sonar-large-128k-online", "messages": [{"role": "user", "content": "What is the purpose of MCP servers?"}], "stream": true}
+2025-06-21 20:54:20,806 - INFO - Received response from OpenRouter. Status code: 200
+2025-06-21 20:54:20,808 - INFO - 127.0.0.1 - - [21/Jun/2025 20:54:20] "POST /deep_research HTTP/1.1" 200 -

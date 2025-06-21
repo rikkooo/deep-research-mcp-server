@@ -1,22 +1,41 @@
 {
-  "name": "deep-research-mcp-client",
+  "name": "deep-research-mcp-server",
   "version": "1.0.0",
-  "description": "A client to interact with the Deep Research MCP server.",
+  "description": "An MCP server for deep research using OpenRouter API",
   "main": "index.js",
   "bin": {
     "deep-research": "./index.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "python -m app",
+    "test": "python test_server.py"
   },
   "keywords": [
     "mcp",
     "deep-research",
-    "cli"
+    "ai",
+    "openrouter"
   ],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.6.2"
+    "node-fetch": "^2.6.7",
+    "eventsource": "^2.0.2"
+  },
+  "mcp": {
+    "servers": {
+      "deep-research": {
+        "command": "python",
+        "args": [
+          "-m",
+          "app"
+        ],
+        "env": {
+          "PATH": "${workspaceFolder}/venv/bin",
+          "PORT": "5000"
+        },
+        "description": "Deep Research MCP Server - Provides AI-powered research capabilities using OpenRouter API"
+      }
+    }
   }
 }

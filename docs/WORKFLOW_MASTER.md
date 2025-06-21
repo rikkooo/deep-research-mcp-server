@@ -4,13 +4,13 @@
 - <current-chat-id>  <!-- append new IDs if the convo reopens later -->
 
 ## State
-CurrentStage: Engineer
+CurrentStage: Validator
 RequirementPointer: 3 #Current active requirement ID (integer). This points to the Nth requirement in PROJECT_REQUIREMENTS.md or a specific req-ID.
 
 StageStatus (checklist):
-- [x] Engineer
+- [ ] Engineer
 - [x] Researcher
-- [x] Coder
+- [ ] Coder
 - [x] Validator
 - [x] Deployer
 

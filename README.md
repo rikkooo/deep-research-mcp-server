@@ -1,87 +1,98 @@
 # Deep Research MCP Server
 
-This project provides a simple MCP (Model-as-a-Component-Provider) server that uses the OpenRouter API to perform deep research queries using Perplexity's online models.
+This project provides a simple MCP (Model Context Protocol) server that uses the OpenRouter API to perform deep research queries using Perplexity's online models.
 
 ## Prerequisites
 
-- Docker
+- Python 3.8+
+- Node.js (optional, for npm commands)
 - An OpenRouter API Key
 
-## How to Build and Run
+## Setup and Running
 
-1.  **Build the Docker image:**
+### Initial Setup
 
-    ```bash
-    docker build -t deep-research-mcp-server .
-    ```
-
-2.  **Run the Docker container:**
-
-    Replace `your_open_router_api_key` with your actual OpenRouter API key.
-
-    ```bash
-    docker run -d -p 8080:8080 -e OPENROUTER_API_KEY=your_open_router_api_key --name deep-research-server deep-research-mcp-server
-    ```
-
-## How to Use
-
-Once the container is running, you can send a `POST` request to the `/deep_research` endpoint with a JSON payload containing your query.
-
-**Example using `curl`:**
+To set up the project and install dependencies, run the `setup.sh` script:
 
 ```bash
-cURL -X POST -H "Content-Type: application/json" -d '{"query": "What are the latest advancements in AI?"}' http://localhost:8080/deep_research
+./setup.sh
 ```
 
-The server will then contact the OpenRouter API and stream back the response from the Perplexity model.
+This script will:
+- Create a `.env` file from `.env.example` if it doesn't exist
+- Create a Python virtual environment if it doesn't exist
+- Install all necessary Python dependencies
 
-## How to Integrate with a Code App (WindSurf, RooCode, etc.)
+After running `setup.sh`, open the `.env` file and add your OpenRouter API key:
 
-To integrate the Deep Research MCP Server with your code application, you can use the provided `npx` command. This allows you to easily call the server from your terminal or from within your application's scripts.
+```
+OPENROUTER_API_KEY=your_open_router_api_key
+MODEL_NAME=perplexity/llama-3.1-sonar-large-128k-online
+```
 
-### Installation
+### Running the Server
 
-First, install the client package globally using `npm`:
+You have two simple options to run the server:
+
+#### Option 1: Using npm
 
 ```bash
-npm install -g .
+npm start
 ```
 
-### Usage
-
-Once the package is installed, you can use the `deep-research` command followed by your query:
+#### Option 2: Using Python directly
 
 ```bash
-deep-research "What are the latest advancements in AI?"
+source venv/bin/activate
+python -m app
 ```
 
-This will send the query to the running MCP server and print the response to the console.
+The server will be available at `http://localhost:5000`.
 
-## How to Run Locally (for testing)
+### MCP Client Integration
 
-1.  **Create and activate a virtual environment:**
+If you're using an MCP-compatible client, it will automatically detect and run the server using the configuration in `package.json`.
 
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
+## MCP Server Configuration
 
-2.  **Install dependencies:**
+This project follows the Model Context Protocol (MCP) specification. The MCP configuration is defined in the `package.json` file, making it easy for MCP clients to discover and use the server.
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+The MCP configuration is simple and standard:
 
-3.  **Set the OpenRouter API Key:**
+```json
+"mcp": {
+  "servers": {
+    "deep-research": {
+      "command": "python",
+      "args": [
+        "-m",
+        "app"
+      ],
+      "env": {
+        "PATH": "${workspaceFolder}/venv/bin"
+      },
+      "description": "Deep Research MCP Server - Provides AI-powered research capabilities using OpenRouter API"
+    }
+  }
+}
+```
 
-    Replace `your_open_router_api_key` with your actual key.
+For clients that support MCP, simply point them to this project directory, and they will automatically detect and use the MCP configuration in `package.json`.
 
-    ```bash
-    export OPENROUTER_API_KEY=your_open_router_api_key
-    ```
+## API Reference
 
-4.  **Run the application:**
+### `POST /deep_research`
 
-    ```bash
-    python app.py
-    ```
+Performs a deep research query using the configured model.
+
+**Request Body:**
+
+```json
+{
+  "query": "Your research query here"
+}
+```
+
+**Response:**
+
+The server will stream the response from the OpenRouter API. The response will be a series of server-sent events (SSE).
